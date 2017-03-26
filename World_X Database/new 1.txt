@@ -1,0 +1,7 @@
+INSERT INTO `country` (`Code`, `Name`, `Continent`, `Region`, `SurfaceArea`, `IndepYear`, `Population`, `LifeExpectancy`, `GNP`, `GNPOld`, `LocalName`, `GovernmentForm`, `HeadOfState`, `Capital`, `Code2`) VALUES ('tes', 'test', 'Asia', '', '0.00', NULL, '0', NULL, NULL, NULL, '', '', NULL, NULL, '');
+
+
+INSERT INTO `city` (`ID`, `Name`, `CountryCode`, `District`, `Population`) VALUES (NULL, 'testt', 'tes', '', '0');
+
+if(mysql_query($result)){
+    echo "Records were deleted successfully.";
