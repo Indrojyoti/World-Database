@@ -1,0 +1,96 @@
+DB SCHEMA FOR WORLD_X DATABASE
+-------------------------
+The world_x Database has 4 TABLES - city, country, countrylanguage, countryinfo.
+
+---city---
+City table has 5 columns: ID, name, CountryCode, District, Population. This table has 4079 entries implying 4079 cities.
+ID is the primary key here and 'CountryCode' is the foreign key which references 'Code' column from 'Country' table.
+--Relation Schema to create the table:
+CREATE TABLE `city` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `Name` CHAR(35) NOT NULL DEFAULT '',
+  `CountryCode` CHAR(3) NOT NULL DEFAULT '',
+  `District` CHAR(20) NOT NULL DEFAULT '',
+  `Population` INT(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`),
+  KEY `CountryCode` (`CountryCode`),
+  CONSTRAINT `city_ibfk_1` FOREIGN KEY (`CountryCode`) REFERENCES `country` (`Code`)
+) ENGINE=InnoDB AUTO_INCREMENT=4080 DEFAULT CHARSET=latin1;
+
+---Country-----
+Country table has 13 columns: Code, name, continent, Region, SurfaceArea, Indepyear, Population, LifeExpectancy, GNP, GNPOLD,
+LocalName, GovernmentForm, HeadOfState, Capital, Code2
+This table has 239 entries implying 239 countries are present in the Table.
+--Relation Schema to create the table--
+CREATE TABLE `country` (
+  `Code` CHAR(3) NOT NULL DEFAULT '',
+  `Name` CHAR(52) NOT NULL DEFAULT '',
+  `Continent` enum('Asia','Europe','North America','Africa','Oceania','Antarctica','South America') NOT NULL DEFAULT 'Asia',
+  `Region` CHAR(26) NOT NULL DEFAULT '',
+  `SurfaceArea` FLOAT(10,2) NOT NULL DEFAULT '0.00',
+  `IndepYear` SMALLINT(6) DEFAULT NULL,
+  `Population` INT(11) NOT NULL DEFAULT '0',
+  `LifeExpectancy` FLOAT(3,1) DEFAULT NULL,
+  `GNP` FLOAT(10,2) DEFAULT NULL,
+  `GNPOld` FLOAT(10,2) DEFAULT NULL,
+  `LocalName` CHAR(45) NOT NULL DEFAULT '',
+  `GovernmentForm` CHAR(45) NOT NULL DEFAULT '',
+  `HeadOfState` CHAR(60) DEFAULT NULL,
+  `Capital` INT(11) DEFAULT NULL,
+  `Code2` CHAR(2) NOT NULL DEFAULT '',
+  PRIMARY KEY (`Code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+---CountryLanguage---
+This table has 4 columns: CountryCode, Language, IsOfficial, Percentage and has 984 entries.
+--Relation Schema to create the table--
+CREATE TABLE `countrylanguage` (
+  `CountryCode` CHAR(3) NOT NULL DEFAULT '',
+  `Language` CHAR(30) NOT NULL DEFAULT '',
+  `IsOfficial` enum('T','F') NOT NULL DEFAULT 'F',
+  `Percentage` FLOAT(4,1) NOT NULL DEFAULT '0.0',
+  PRIMARY KEY (`CountryCode`,`Language`),
+  KEY `CountryCode` (`CountryCode`),
+  CONSTRAINT `countryLanguage_ibfk_1` FOREIGN KEY (`CountryCode`) REFERENCES `country` (`Code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+---countryinfo---
+This table generally has 2 columns: _id and doc
+The doc has every country data in json format for easy display on the webapp. _id is the primary key.
+This Table too has 239 entries.
+--Relation Schema to create the table--
+CREATE TABLE `countryinfo` (
+  `doc` json DEFAULT NULL,
+  `_id` VARCHAR(32) GENERATED ALWAYS AS (json_unquote(json_extract(doc, '$._id'))) STORED PRIMARY KEY
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+---------------------------------------------------------------------------------------------------------------------
+USERS/LOGINS
+  This does not have any users or logins.
+---------------------------------------------------------------------------------------------------------------------
+WORKFLOW:
+The webapp is made with PHP, HTML, CSS, BOOTSTRAP and MYSQL Database. For localhost, wampserver is used.
+To run it as a localHost put the folder containing all your files in "C:\wamp64\www\" and run the wampServer.
+The World_x Database folder consists of several files such as php and some folders for styling and images for Bootstrap and css
+effects.
+Every page has same styling and NavBar so all the Front-End party is same in all the pages. And all the pages can be visited by
+hyperlinks made. Here php is generally used to connect MySql to the Database. All the SQL results are echoed in a for loop and displayed.
+Files:
+---Index.php----
+This is the homepage of the WebApp. It has few buttons using default bootstrap style and these navigate to different pages
+displaying their respective MySql query results.
+---Languages.php---
+This page displays all the languages as hyperlinks in ascending order. languages can be searched and if it's a hit it returns
+a page with all the countries speaking that language. Similar output if you click a language.
+---country.php---
+This page generally shows all the countries as hyperlinks. There is a drop down menu to sort the countries and order them by CountryName, Population,
+SurfaceArea, IndepYear. Any country can be searched can the result is diaplayed by country_show.php file. All the hyperlinks navigate to country_show.php
+---country_show.php---
+This one is main php file and it contains all the sql queries of both index page and country page. Here all the searched countries
+or all the countries details and their cities are shown as hyperlinks. These hyperlinks are again redirected to city.php.
+---city.php---
+These pages displays all the cities in ascending order and can be sorted and ordered by CityName and Population of the city. Each City
+is a Hyperlink and is a redirected to a page(country_show.php) displaying the details of that particular city.
+------------------------------------------------------------------------------------------------------------------------------------
+In the Database various procedures and views have been used including all the six types of joins and primary indexing. You can view All
+the queries in the php code and details of procedures and the views in the phpmyadmin page from the wampserver.
